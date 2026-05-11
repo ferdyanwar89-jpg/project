@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html class="dark" lang="id">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Ferdy Anwar - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .active-link { color: #3c83f6 !important; font-weight: 700 !important; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+    <div id="root"></div>
+
+    <!-- React and Dependencies -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Shared Components ---
+
+        const Navigation = () => {
+            const location = useLocation();
+            const navigate = useNavigate();
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+            const navLinks = [
+                { path: "/", label: "Beranda" },
+                { path: "/kompetensi", label: "Kompetensi" },
+                { path: "/proyek", label: "Proyek" },
+                { path: "/galeri", label: "Galeri" },
+                { path: "/tentang", label: "Tentang" },
+                { path: "/kontak", label: "Kontak" }
+            ];
+
+            return (
+                <header className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 md:px-20 lg:px-40 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-50">
+                    <div className="flex items-center gap-3 text-primary">
+                        <div className="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+                            <span className="material-symbols-outlined">terminal</span>
+                        </div>
+                        <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">Ferdy Anwar</h2>
+                    </div>
+                    
+                    {/* Desktop Nav */}
+                    <nav className="hidden md:flex flex-1 justify-end gap-8 items-center">
+                        <div className="flex items-center gap-8">
+                            {navLinks.map(link => (
+                                <Link 
+                                    key={link.path}
+                                    to={link.path} 
+                                    className={`text-sm font-medium transition-colors ${location.pathname === link.path ? 'text-primary' : 'text-slate-600 dark:text-slate-400 hover:text-primary'}`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
+                        <button 
+                            onClick={() => navigate('/kontak')}
+                            className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-all"
+                        >
+                            Hire Me
+                        </button>
+                    </nav>
+
+                    {/* Mobile Menu Toggle */}
+                    <div className="md:hidden flex items-center gap-4">
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-slate-900 dark:text-white">
+                            <span className="material-symbols-outlined">{isMenuOpen ? 'close' : 'menu'}</span>
+                        </button>
+                    </div>
+
+                    {/* Mobile Nav Overlay */}
+                    {isMenuOpen && (
+                        <div className="absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-6 flex flex-col gap-4 md:hidden shadow-xl">
+                            {navLinks.map(link => (
+                                <Link 
+                                    key={link.path}
+                                    to={link.path} 
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`text-base font-semibold ${location.pathname === link.path ? 'text-primary' : 'text-slate-600 dark:text-slate-400'}`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </header>
+            );
+        };
+
+        const Footer = () => (
+            <footer className="px-6 py-12 md:px-20 lg:px-40 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark/50">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div className="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
+                        <div className="flex items-center gap-2 text-primary mb-2">
+                            <span className="material-symbols-outlined">rocket_launch</span>
+                            <span className="font-bold text-slate-900 dark:text-white">Ferdy Anwar</span>
+                        </div>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">
+                            © 2026 Tech Specialist Portfolio. All rights reserved.
+                        </p>
+                    </div>
+                    <div className="flex gap-6">
+                        <a className="text-slate-400 hover:text-primary transition-colors" href="#"><span className="material-symbols-outlined">public</span></a>
+                        <a className="text-slate-400 hover:text-primary transition-colors" href="#"><span className="material-symbols-outlined">alternate_email</span></a>
+                        <a className="text-slate-400 hover:text-primary transition-colors" href="#"><span className="material-symbols-outlined">data_object</span></a>
+                    </div>
+                </div>
+            </footer>
+        );
+
+        // --- Screen Components ---
+
+        const HomePage = () => {
+            const navigate = useNavigate();
+            return (
+                <main className="flex-1 flex flex-col items-center justify-center px-6 md:px-20 lg:px-40 py-12 md:py-24 relative">
+                    <div className="max-w-[1200px] w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                        <div className="lg:col-span-7 flex flex-col gap-8">
+                            <div className="flex">
+                                <div className="flex items-center gap-x-2 rounded-full bg-primary/10 dark:bg-primary/20 border border-primary/20 px-4 py-1.5 transition-all">
+                                    <span className="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+                                    <p className="text-primary text-xs md:text-sm font-semibold tracking-wide uppercase">Available for projects</p>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-4">
+                                <h1 className="text-slate-900 dark:text-white text-5xl md:text-7xl font-black leading-tight tracking-tight">
+                                    Halo, Saya <span className="text-primary">Ferdy Anwar</span>
+                                </h1>
+                                <h2 className="text-slate-700 dark:text-slate-200 text-2xl md:text-3xl font-bold">
+                                    Pelajar PPLG | Junior Web Developer
+                                </h2>
+                                <p className="text-slate-600 dark:text-slate-400 text-lg md:text-xl font-normal leading-relaxed">
+                                    Memiliki passion mendalam dalam pengembangan web dan desain UI/UX untuk menciptakan solusi digital yang inovatif dan fungsional.
+                                </p>
+                            </div>
+                            <div className="flex flex-wrap gap-4 items-center">
+                                <button onClick={() => navigate('/proyek')} className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-xl h-14 px-6 bg-primary text-white text-lg font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all active:scale-95">
+                                    <span>Lihat Proyek</span>
+                                </button>
+                                <button onClick={() => navigate('/kontak')} className="flex min-w-[160px] cursor-pointer items-center justify-center rounded-xl h-14 px-6 border-2 border-slate-300 dark:border-slate-700 bg-transparent text-slate-900 dark:text-white text-lg font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95">
+                                    <span>Hubungi Saya</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div className="lg:col-span-5 hidden lg:block">
+                            <div className="relative group">
+                                <div className="absolute -inset-2 bg-gradient-to-r from-primary to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+                                <div className="relative aspect-square w-full rounded-xl bg-slate-200 dark:bg-slate-800 overflow-hidden border border-slate-300 dark:border-slate-700">
+                                    <img alt="Professional Web Developer Portrait" className="w-full h-full object-cover" src="foto profil.jpeg"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 mt-8 border-t border-slate-200 dark:border-slate-800">
+                            <div className="flex flex-col gap-1 p-4 rounded-xl bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+                                <span className="text-primary text-3xl font-black">2+ Tahun</span>
+                                <span className="text-slate-600 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Belajar IT</span>
+                            </div>
+                            <div className="flex flex-col gap-1 p-4 rounded-xl bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+                                <span className="text-primary text-3xl font-black">15+ Proyek</span>
+                                <span className="text-slate-600 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Selesai</span>
+                            </div>
+                            <div className="flex flex-col gap-1 p-4 rounded-xl bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+                                <span className="text-primary text-3xl font-black">5+ Desain</span>
+                                <span className="text-slate-600 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Modern UI/UX</span>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Background Decoration */}
+                    <div className="fixed top-0 right-0 -z-10 w-full h-full opacity-20 pointer-events-none overflow-hidden">
+                        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary rounded-full blur-[120px]"></div>
+                        <div className="absolute top-1/2 -left-24 w-64 h-64 bg-blue-600 rounded-full blur-[100px]"></div>
+                    </div>
+                </main>
+            );
+        };
+
+        const KompetensiPage = () => {
+            const navigate = useNavigate();
+            const skills = [
+                { icon: "code", title: "Web Development", desc: "Penguasaan teknologi frontend modern termasuk HTML5, CSS3, dan JavaScript untuk antarmuka responsif." },
+                { icon: "polyline", title: "UI/UX Design", desc: "Perancangan pengalaman pengguna melalui Wireframing dan Dashboard Design yang intuitif." },
+                { icon: "account_tree", title: "Pemodelan Sistem", desc: "Analisis alur sistem menggunakan standar UML dan Use Case Diagram untuk dokumentasi teknis." },
+                { icon: "database", title: "Dasar Database", desc: "Pengelolaan data terstruktur dengan SQL dan Relational Mapping untuk integritas informasi." }
+            ];
+            return (
+                <main className="flex flex-1 flex-col px-6 py-10 md:px-20 lg:px-40 max-w-[1280px] mx-auto w-full">
+                    <div className="flex flex-col gap-4 mb-12">
+                        <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white">
+                            Keahlian Utama & Teknologi
+                        </h1>
+                        <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl">
+                            Menggabungkan logika pemrograman dengan estetika desain untuk menghasilkan solusi digital yang optimal dan fungsional.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                        {skills.map((skill, idx) => (
+                            <div key={idx} className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 hover:border-primary/50 transition-all group">
+                                <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <span className="material-symbols-outlined text-2xl">{skill.icon}</span>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <h2 className="text-slate-900 dark:text-white text-xl font-bold">{skill.title}</h2>
+                                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{skill.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-auto">
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-6 rounded-2xl border border-primary/20 bg-primary/5 p-8 md:p-10 backdrop-blur-sm">
+                            <div className="flex flex-col gap-2 text-center md:text-left">
+                                <p className="text-slate-900 dark:text-white text-2xl font-bold">Tertarik berkolaborasi?</p>
+                                <p className="text-slate-600 dark:text-slate-400 text-lg">Mari diskusikan bagaimana keahlian saya dapat membantu menyukseskan proyek Anda selanjutnya.</p>
+                            </div>
+                            <button onClick={() => navigate('/kontak')} className="flex items-center gap-2 min-w-[180px] cursor-pointer justify-center rounded-lg h-12 px-6 bg-primary text-white text-base font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                                <span className="material-symbols-outlined">send</span>
+                                <span>Hubungi Saya</span>
+                            </button>
+                        </div>
+                    </div>
+                </main>
+            );
+        };
+
+        const ProyekPage = () => {
+            const projects = [
+                {
+                    title: "Sistem Peminjaman Perpustakaan",
+                    tags: ["UML Focus", "Development"],
+                    desc: "Sistem manajemen buku digital dengan alur kerja yang efisien, dirancang untuk mempermudah administrasi perpustakaan sekolah maupun instansi.",
+                    features: ["Manajemen Anggota & Autentikasi", "Katalog Buku Dinamis", "Riwayat Peminjaman Real-time", "Laporan Statistik Bulanan"],
+                    tech: ["UML", "HTML", "CSS"],
+                    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBjEviBkCZqOmPQZctoTuVxt3MMo-7-rbCKETcDAZKsmcjxpaY13KdiQH0TjPLwSGsXL6K6IeYMarRmBKj-TLB7TVSrA4vQnJ_cYyY7BijBTaa5wGcGeX_65yZ6jmhqqsPjxvYmLjh3Lod65bUbxsuCcsawBvOPNwsG7jKwM_i3TXWux1Wl0bpbudHq0FFYjMqelEpAnTfusEJhe5e7vQzVyfACEPxJZvD_hAcv90w0FLFSth760i97Kvs39XfCbUjjxoBe6ze56Rc"
+                },
+                {
+                    title: "Website Portofolio Pribadi",
+                    tags: ["Modern Dark Theme", "Web Design"],
+                    desc: "Representasi digital profesional dengan fokus pada pengalaman pengguna yang mulus dan visual yang tajam dalam mode gelap.",
+                    features: ["Responsive Layout (Mobile First)", "Interactive Project Gallery", "Contact Form Integration", "Optimized Performance"],
+                    tech: ["Tailwind", "Javascript", "Next.js"],
+                    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuARFMGn3bfYM7izuCjDCCON84ex9hfG1h9D0ouzR_ZWmXXC42p1SUWc0VYtTJsYTXSULQi00Qn8Q3xvBVaPVAZDohZ583mi_tnXvJrpvmDjRmODcmjNtmtR-JrwgDnCB8MN2XIAcBFLUgXNDRQboNMOsfdaDWuujsaJA7_MohWvob6J3x9yV--AbiNFcxqB9AsqKOhzm6-s8RGF_AsO4fHtE4XaniE6siMXz3SSqgmoSR6n7FL2dRA_xLWzhCrbg-QrBMt3BhqzB5c",
+                    reverse: true
+                }
+            ];
+            return (
+                <main className="max-w-6xl mx-auto px-6 py-12 w-full">
+                    <div className="mb-12">
+                        <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">Proyek Unggulan</h1>
+                        <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl">
+                            Koleksi karya terbaik dalam pengembangan web dan desain UI/UX yang menekankan pada fungsionalitas dan estetika modern.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 gap-10">
+                        {projects.map((p, i) => (
+                            <div key={i} className={`group flex flex-col ${p.reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300`}>
+                                <div className="lg:w-2/5 relative overflow-hidden">
+                                    <div className="h-full min-h-[250px] bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                                        <img src={p.img} alt={p.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+                                    </div>
+                                </div>
+                                <div className="lg:w-3/5 p-8 flex flex-col justify-between">
+                                    <div>
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            {p.tags.map(t => <span key={t} className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider rounded-full border border-primary/20">{t}</span>)}
+                                        </div>
+                                        <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">{p.title}</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">{p.desc}</p>
+                                        <div className="mb-6">
+                                            <h4 className="text-sm font-bold text-slate-500 dark:text-slate-500 uppercase tracking-widest mb-3">Fitur Utama</h4>
+                                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                {p.features.map(f => (
+                                                    <li key={f} className="flex items-center gap-2 text-sm">
+                                                        <span className="material-symbols-outlined text-primary text-lg">check_circle</span> {f}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between mt-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                                        <div className="flex gap-2">
+                                            {p.tech.map(t => <span key={t} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded">{t}</span>)}
+                                        </div>
+                                        <button className="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg text-sm font-bold transition-colors">Lihat Detail</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </main>
+            );
+        };
+
+        const GaleriPage = () => {
+            const gallery = [
+                { title: "Use Case Diagram Perpustakaan", tag: "UML Design", desc: "Pemetaan aktor dan fungsionalitas utama untuk sistem manajemen perpustakaan modern berbasis web.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBigUgOceCEh4i46yIhdKcgqE68IqAovJX9Q5-WDFg6zfqP1IrLlx3rIe42AgeaZsFqUH51b18Cm7e15GQjSaZQ8s9pE4IYaMHvLvkNF92j5CjlisNwl6GBYlJx20le-m-XIv_Zgjqlrqzbxn-WELfCpQgmfI8CLtSN3KdO7G13UUmA-cqPtGSWG32ZYJ8BVtj2ze_jg19wRRNrlQ82gbWGk77sPTfI3Ouv3rIGaizfTU72SYZbYGwtFx_h2JteE_teKUrVk7A7MbI" },
+                { title: "Interface Form Peminjaman", tag: "UI Design", desc: "Desain antarmuka responsif yang memudahkan pengguna dalam proses input data peminjaman buku.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDhDFT7RM19wpOfJzHAC0cgTtyccHqnVmR64AOTfhAM9ShV0hKdPtGtX0xT9FLS3ml3NVuSdLqJuCUivgzowvXKs6W0K6ijByZQWBBmrI4drDhi-OJNn6tHMUIPcFbAjbsCrCeWMRF8yl6jrJt7aiXzj4P99wNcGujXYq4wRv1-2OYE12X5XyPAV-O1tpRUQVL2tM0OTMLve7MPGEwNNvCTVr55vHpD75KYnTM9kv3eGdCjcOzznIrUP_BpgCU0L0HIuzGMUn6-SgI" },
+                { title: "Diagram Sistem Aplikasi Sekolah", tag: "System Analysis", desc: "Arsitektur backend terintegrasi untuk pengelolaan data siswa, guru, dan nilai secara real-time.", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCCgS2pE0PSNuGFxtaUZ9LT9QrEDB1DDeQujG-XbwiKXs9NSulgdLFtfSRD0xkj2OI65eltfc4VeitwbGFmXtdWj_jxTRT5alvC4kHcm-KtMMOlbL4j78mkq9p7FPcPeHGScAdyu9dE0lG_Yd3KkanG4MmtDwmO56S-vmXtNcfLvJBBGNj7xQ844Zij4D3qvdfqaWz2gP6CBuw7jWcELeuuA6A5n4o_bYyKeuSMrF_1ghpsPD1dDKKPV-MxEPILVYBBHW75NtuPrQs" }
+            ];
+            return (
+                <main className="flex flex-1 justify-center py-10 px-4 md:px-20 lg:px-40">
+                    <div className="layout-content-container flex flex-col max-w-[1200px] flex-1">
+                        <div className="flex flex-col gap-6 mb-12">
+                            <h1 className="text-slate-900 dark:text-slate-100 text-4xl md:text-5xl font-black leading-tight tracking-tight">Galeri Proyek Saya</h1>
+                            <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl">Kumpulan karya terbaik dalam pengembangan sistem, analisis UML, dan perancangan antarmuka pengguna.</p>
+                            <div className="flex flex-wrap gap-2 py-2">
+                                <button className="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold">Semua</button>
+                                <button className="px-5 py-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 text-sm font-medium">Website</button>
+                                <button className="px-5 py-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 text-sm font-medium">UML</button>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {gallery.map((item, idx) => (
+                                <div key={idx} className="group flex flex-col gap-4 bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 transition-all hover:shadow-xl hover:-translate-y-1">
+                                    <div className="relative w-full aspect-video overflow-hidden">
+                                        <div className="w-full h-full bg-center bg-no-repeat bg-cover transition-transform duration-500 group-hover:scale-105" style={{backgroundImage: `url(${item.img})`}}></div>
+                                        <div className="absolute top-3 left-3 z-20">
+                                            <span className="px-3 py-1 bg-slate-900/80 backdrop-blur-md text-white text-xs font-bold rounded-full uppercase tracking-wider border border-white/10">{item.tag}</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-5 flex flex-col gap-2">
+                                        <h3 className="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight group-hover:text-primary transition-colors">{item.title}</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                                        <div className="flex items-center gap-2 mt-2 text-primary text-sm font-semibold">
+                                            <span>Lihat Detail</span>
+                                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </main>
+            );
+        };
+
+        const TentangPage = () => (
+            <main className="flex flex-1 flex-col items-center">
+                <div className="w-full max-w-[1200px] px-6 py-12 md:py-20 flex flex-col gap-16">
+                    <div className="flex flex-col gap-4">
+                        <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white">Tentang Saya</h1>
+                        <div className="h-1.5 w-24 bg-primary rounded-full"></div>
+                    </div>
+                    <div className="flex flex-col items-center w-full">
+                        <div className="w-full max-w-3xl flex flex-col gap-8">
+                            <div className="flex flex-col gap-4">
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-primary/20 text-primary w-fit">Web Developer Profesional</span>
+                                <h2 className="text-3xl font-bold text-slate-900 dark:text-white leading-snug">Membangun Solusi Digital dengan Kreativitas dan Kode.</h2>
+                                <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+                                    Saya adalah seorang pengembang web yang berdedikasi untuk menciptakan aplikasi modern yang skalabel dan berpusat pada pengguna. Dengan fokus pada efisiensi sistem dan estetika desain, saya membantu bisnis mengubah ide kompleks menjadi kenyataan digital yang fungsional.
+                                </p>
+                            </div>
+                            <div className="flex flex-col gap-5">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Spesialisasi & Minat</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {[
+                                        {icon: "code", label: "Pemrograman"},
+                                        {icon: "palette", label: "Desain Modern"},
+                                        {icon: "hub", label: "Perancangan Sistem"},
+                                        {icon: "bolt", label: "Skill Teknologi"}
+                                    ].map(spec => (
+                                        <div key={spec.label} className="flex items-center gap-3 p-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                            <span className="material-symbols-outlined text-primary">{spec.icon}</span>
+                                            <span className="font-medium">{spec.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        );
+
+        const KontakPage = () => (
+            <main className="flex-1 flex flex-col items-center justify-center px-6 lg:px-40 py-12">
+                <div className="text-center mb-12">
+                    <span className="text-primary font-bold tracking-widest uppercase text-xs">Ayo Terhubung</span>
+                    <h1 className="text-slate-900 dark:text-white text-4xl md:text-5xl font-extrabold mt-2">Tertarik Berdiskusi?</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-4 max-w-lg mx-auto">Saya selalu terbuka untuk kolaborasi baru, proyek kreatif, atau sekadar menyapa teman baru di industri ini.</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mb-20">
+                    {[
+                        { icon: "mail", title: "Email", value: "ferdyanwar@example.com", action: "Kirim Pesan", link: "mailto:ferdy@example.com" },
+                        { icon: "photo_camera", title: "Instagram", value: "@ferd.yonces", action: "Ikuti Saya", link: "#" },
+                        { icon: "terminal", title: "GitHub", value: "github.com/ferdy", action: "Lihat Repositori", link: "#" }
+                    ].map((contact, idx) => (
+                        <div key={idx} className="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-6 hover:border-primary/50 transition-colors group">
+                            <div className="text-primary bg-primary/10 size-12 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                                <span className="material-symbols-outlined">{contact.icon}</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <h2 className="text-slate-900 dark:text-white text-lg font-bold">{contact.title}</h2>
+                                <p className="text-slate-500 dark:text-slate-400 text-sm">{contact.value}</p>
+                            </div>
+                            <a className="mt-2 text-primary text-sm font-semibold flex items-center gap-2" href={contact.link}>
+                                {contact.action} <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                            </a>
+                        </div>
+                    ))}
+                </div>
+                <div className="w-full max-w-5xl rounded-2xl bg-slate-900 dark:bg-primary/10 border border-slate-800 dark:border-primary/20 p-8 md:p-16 text-center overflow-hidden relative">
+                    <div className="absolute -top-24 -right-24 size-64 bg-primary/20 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-24 -left-24 size-64 bg-primary/10 rounded-full blur-3xl"></div>
+                    <div className="relative z-10 flex flex-col items-center gap-8">
+                        <h2 className="text-white text-3xl md:text-5xl font-black leading-tight max-w-2xl">Siap Berkembang Bersama? Hubungi Saya Sekarang</h2>
+                        <button className="flex min-w-[240px] cursor-pointer items-center justify-center rounded-full h-14 px-8 bg-primary text-white text-lg font-bold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/25">Hubungi Saya Sekarang</button>
+                    </div>
+                </div>
+            </main>
+        );
+
+        // --- App Component ---
+
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+                        <Navigation />
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/kompetensi" element={<KompetensiPage />} />
+                            <Route path="/proyek" element={<ProyekPage />} />
+                            <Route path="/galeri" element={<GaleriPage />} />
+                            <Route path="/tentang" element={<TentangPage />} />
+                            <Route path="/kontak" element={<KontakPage />} />
+                        </Routes>
+                        <Footer />
+                    </div>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
